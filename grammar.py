@@ -405,10 +405,8 @@ class Validator:
         write(stack, _input, izq, der)
 
         node.setitem(prod)
-        #print(prod)
+
         for term in prod:
-            #print(prod)
-            print('termino',term,non_terminal,tokens[idx].type,term==tokens[idx].type)  #//Ver que termino se trabaja.
             if term == '':
                 lista.pop()
                 continue
@@ -416,7 +414,6 @@ class Validator:
                 lista.pop()
                 continue
             is_terminal = self.terminal.get(term, False)
-            #print(is_terminal)
             if not is_terminal:
                 idx = self._validate(term, idx, tokens, lista, node.childrens[term], nivel+1)
                 if idx == -1:
@@ -438,8 +435,6 @@ class Validator:
         arbol = Node(self.initial_state,'e', [])
         lista = [self.initial_state]
         size = self._validate(self.initial_state, 0, tokens, lista, arbol, 0)
-        #print("Lo logro")  //Imprime una correcta finalización.
-        #print(size,len(tokens))
         return arbol, size == len(tokens)
 
 
@@ -450,7 +445,9 @@ class Tokenizer:
         file = open(path_text, 'r')
         num_line = 1
         for line in file:
-            self.tokenizer_line(line, num_line)
+            line = line.strip()
+            if line:
+                self.tokenizer_line(line, num_line)
             num_line += 1
         token = Token(DOLAR, DOLAR, -1, -1)
         self.tokens.append(token)
@@ -465,6 +462,19 @@ class Tokenizer:
                 token,idx = self.check_variable(line, n_line, idx)
                 self.tokens.append(token)
             elif line[idx] == ' ' or line[idx] == '\n':
+                idx += 1
+            elif line[idx] == '.':
+                token = Token(line[idx:idx + 1], '.', n_line, idx)
+                self.tokens.append(token)
+                idx += 1
+            elif line[idx] == '\'':
+                next = line.find('\'', idx + 1)
+                token = Token(line[idx:next + 1], "string", n_line, idx)
+                self.tokens.append(token)
+                idx = next + 1
+            elif line[idx] == ';':
+                token = Token(line[idx:idx + 1], ';', n_line, idx)
+                self.tokens.append(token)
                 idx += 1
             else:
                 if line[idx:idx+2] in comparison_op:
@@ -493,7 +503,6 @@ class Tokenizer:
 
 if __name__ == '__main__':
     tokens = Tokenizer('input.txt')
-    print(tokens.tokens)
     file = File('rules.txt')
     grammar = Grammar()
     grammar.set_init('S')
@@ -501,9 +510,8 @@ if __name__ == '__main__':
     grammar.get_firsts()
     grammar.get_nexts()
     grammar.create_table()
-    #grammar.print_tas() #///Para verificar que se crea correctamente la tabla
-    print("No terminales",grammar.non_terminals)
-    print("Terminales",grammar.terminals)
+
+    print(tokens.tokens)
 
     validator = Validator(grammar.terminals, grammar.tas, 'S')
     parse_tree, is_valid = validator.validate(tokens.tokens)
