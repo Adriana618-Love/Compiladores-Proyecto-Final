@@ -7,3 +7,15 @@ Print(y);
 Print(y * x);
 
 Print(((x) * x));
+
+set x (3);
+Print(((x) * x));
+Print((5 + 4 * 2));
+
+while (x < 10) {
+    Print(x);
+    set x(x + 1);
+    if ((x <= 8) && (x>7)) {
+        set x(10);
+    }
+}

@@ -7,7 +7,7 @@ DOLAR = '$'
 EPSILON = 'lambda'
 operation_assign = ['=', '+', '-', '*', '/']
 parenthesis = ['(', ')', '[', ']', '{', '}']
-comparison_op = ['!=', '==', '<', '>', '<=', '>=']
+comparison_op = ['!=', '==', '<', '>', '<=', '>=', '&&', '||']
 reserved_words = ['while', 'if', 'else', 'd_number', 'd_string', 'd_video', 'set', 'subclip', 'volumex',
                  'VideoFileClip', 'ImageClip', 'Print']
 

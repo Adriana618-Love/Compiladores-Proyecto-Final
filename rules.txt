@@ -42,15 +42,17 @@ expression ::= ImageClip ( expression ) expression_p
 expression_p ::= operator expression
 expression_p ::= lambda
 
-operator ::= +
-operator ::= -
 operator ::= *
 operator ::= /
+operator ::= +
+operator ::= -
 operator ::= <
 operator ::= >
 operator ::= .
 operator ::= <=
 operator ::= >=
 operator ::= ==
+operator ::= &&
+operator ::= ||
 
 endline ::= ;

@@ -163,14 +163,28 @@ class Syn_expression_p(SyntacticClass):
 
 class Syn_operator(SyntacticClass):
     def interpret(self, term1, term2):
-        if self.childrens.get('+', False):
-            return term1 + term2
-        elif self.childrens.get('-', False):
-            return term1 - term2
-        elif self.childrens.get('*', False):
+        if self.childrens.get('*', False):
             return term1 * term2
         elif self.childrens.get('/', False):
             return term1 / term2
+        elif self.childrens.get('+', False):
+            return term1 + term2
+        elif self.childrens.get('-', False):
+            return term1 - term2
+        elif self.childrens.get('==', False):
+            return term1 == term2
+        elif self.childrens.get('<=', False):
+            return term1 <= term2
+        elif self.childrens.get('&&', False):
+            return term1 and term2
+        elif self.childrens.get('||', False):
+            return term1 or term2
+        elif self.childrens.get('>=', False):
+            return term1 >= term2
+        elif self.childrens.get('<', False):
+            return term1 < term2
+        elif self.childrens.get('>', False):
+            return term1 > term2
 
 
 class Node:
