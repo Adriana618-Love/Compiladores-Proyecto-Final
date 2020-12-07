@@ -1,5 +1,7 @@
+from moviepy.editor import VideoFileClip
 
 Scope = {}
+Videos = {}
 
 
 class SyntacticClass:
@@ -43,6 +45,8 @@ class Syn_statement(SyntacticClass):
             self.childrens['assigment'].interpret()
         elif self.childrens.get('other_statement', False):
             self.childrens['other_statement'].interpret()
+        elif self.childrens.get('expression', False):
+            self.childrens['expression'].interpret()
 
 
 class Syn_bucle(SyntacticClass):
@@ -78,13 +82,16 @@ class Syn_declaration(SyntacticClass):
             else:
                 raise Exception('The variable was previously defined')
         elif self.start_with('d_video'):
+            if not self.childrens.get('declaration_p', False):
+                raise Exception('video variable needs file name to load')
             if Scope.get(self.childrens['variable'].value) is None:
-                Scope[self.childrens['variable'].value] = ''  # put video empty instance
+                Scope[self.childrens['variable'].value] = VideoFileClip(self.childrens['declaration_p'].interpret())
             else:
                 raise Exception('The variable was previously defined')
+            return self.childrens['variable'].interpret()
         if self.childrens.get('declaration_p', False):
             Scope[self.childrens['variable'].value] = self.childrens['declaration_p'].interpret()
-        return Scope[self.childrens['variable'].value]
+        return self.childrens['variable'].interpret()
 
 
 class Syn_declaration_p(SyntacticClass):
@@ -128,28 +135,37 @@ class Syn_expression(SyntacticClass):
             return self.childrens['expression_p'].interpret(
                 self.childrens['string'].interpret()
             )
-        elif self.start_with('VideoFileClip'):
-            # this needs video implementation
-            print('Processing video')
-        elif self.start_with('ImageClip'):
-            # this needs video implementation
-            print('Processing video')
 
 
 class Syn_expression_variable(SyntacticClass):
     def interpret(self, val=None):
         if self.childrens.get('expression_variable_p'):
-            return self.childrens['expression_variable_p'].interpret(
-                val
-            )
+            return self.childrens['expression_variable_p'].interpret(val)
         return val
 
 
 class Syn_expression_variable_p(SyntacticClass):
     def interpret(self, val=None):
+        print (val.__class__.__name__)
         if self.childrens.get('subclip', False):
-            return val.subclip()
+            return val.subclip(
+                self.childrens.get('expression').interpret(),
+                self.childrens.get('expression_2').interpret()
+            )
+        elif self.childrens.get('write_video', False):
+            return val.write_videofile(
+                self.childrens.get('expression').interpret()
+            )
+        elif self.childrens.get('volumex', False):
+            return val.volumex(
+                self.childrens.get('expression').interpret()
+            )
         return val
+
+
+class Syn_expression_2(SyntacticClass):
+    def interpret(self):
+        return self.childrens['expression'].interpret()
 
 
 class Syn_expression_p(SyntacticClass):
@@ -215,12 +231,11 @@ class Node:
         return ret
 
     def interpret(self, prev=None, prev2=None):
-        # print(self.label)
         if not self.childrens:
             if self.label == 'number':
                 return int(self.value)
             elif self.label == 'string':
-                return str(self.value)
+                return str(self.value)[1: -1]
             elif self.label == 'variable':
                 return Scope.get(self.value)
         elif self.label == 'S':
@@ -245,6 +260,8 @@ class Node:
             return Syn_assigment(self.value, self.childrens).interpret()
         elif self.label == 'expression':
             return Syn_expression(self.value, self.childrens).interpret()
+        elif self.label == 'expression_2':
+            return Syn_expression_2(self.value, self.childrens).interpret()
         elif self.label == 'expression_p':
             return Syn_expression_p(self.value, self.childrens).interpret(prev)
         elif self.label == 'expression_variable':

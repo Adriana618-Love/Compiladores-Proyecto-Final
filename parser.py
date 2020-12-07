@@ -5,11 +5,12 @@ from interpreter import Node
 
 DOLAR = '$'
 EPSILON = 'lambda'
-operation_assign = ['=', '+', '-', '*', '/']
+operation_assign = ['=', '+', '-', '*', '/', ',']
 parenthesis = ['(', ')', '[', ']', '{', '}']
 comparison_op = ['!=', '==', '<', '>', '<=', '>=', '&&', '||']
-reserved_words = ['while', 'if', 'else', 'd_number', 'd_string', 'd_video', 'set', 'subclip', 'volumex',
-                 'VideoFileClip', 'ImageClip', 'Print']
+reserved_words = ['while', 'if', 'else', 'set', 'd_number', 'd_string', 'd_video', 'd_video_text',
+                  'subclip', 'volumex', 'Print', 'write_video', 'set_video_duration',
+                  'show_frame', 'video_preview', 'set_start']
 
 
 class File:
