@@ -1,6 +1,4 @@
 
-d_number x (1) ;
+d_number x (1);
 
-if ( 1 > 0 ) {
-    set x ( 1 + 1 );
-}
+Print (1);

@@ -1,6 +1,7 @@
 
 import os
 from os import path
+from interpreter import Node
 
 DOLAR = '$'
 EPSILON = 'lambda'
@@ -8,7 +9,7 @@ operation_assign = ['=', '+', '-', '*', '/']
 parenthesis = ['(', ')', '[', ']', '{', '}']
 comparison_op = ['!=', '==', '<', '>', '<=', '>=']
 reserved_words = ['while', 'if', 'else', 'd_number', 'd_string', 'd_video', 'set', 'subclip', 'volumex',
-                 'VideoFileClip', 'ImageClip']
+                 'VideoFileClip', 'ImageClip', 'Print']
 
 
 class File:
@@ -257,105 +258,6 @@ class Token:
         return "<%s, %s, %d, %d>" % (self.item, self.type, self.line, self.column)
 
 
-class synE:
-    def __init__(self, value, childrens):
-        self.childrens = childrens
-        self.value = value
-
-    def interpret(self):
-        return self.childrens['Ep'].interpret(self.childrens['T'].interpret())
-
-
-class synEp:
-    def __init__(self, value, childrens):
-        self.childrens = childrens
-        self.value = value
-
-    def interpret(self, prev):
-        if self.childrens.get('T'):
-            valueT = self.childrens.get('T').interpret()
-            if self.childrens.get('+'):
-                return self.childrens.get('Ep').interpret(prev + valueT)
-            elif self.childrens.get('-'):
-                return self.childrens.get('Ep').interpret(prev - valueT)
-        return prev
-
-
-class synT:
-    def __init__(self, value, childrens):
-        self.childrens = childrens
-        self.value = value
-
-    def interpret(self):
-        return self.childrens['Tp'].interpret(self.childrens['F'].interpret())
-
-
-class synTp:
-    def __init__(self, value, childrens):
-        self.childrens = childrens
-        self.value = value
-
-    def interpret(self, prev):
-        if self.childrens.get('F'):
-            valueF = self.childrens.get('F').interpret()
-            if self.childrens.get('*'):
-                return self.childrens.get('Tp').interpret(prev * valueF)
-        return prev
-
-
-class synF:
-    def __init__(self, value, childrens):
-        self.childrens = childrens
-        self.value = value
-
-    def interpret(self):
-        if self.childrens.get('E'):
-            return self.childrens['E'].interpret()
-        return self.childrens['num'].interpret()
-
-
-class Node:
-    def __init__(self,label,value, hijos):
-        self.childrens = {}
-        self.value = value
-        self.label = label
-        for i in range(0, len(hijos)):
-            self.childrens[hijos[i]] = Node(hijos[i],'e',[])
-
-    def __getitem__(self, child):
-        return self.childrens[child]
-
-    def setitem(self, hijos):
-        for i in range(0, len(hijos)):
-            self.childrens[hijos[i]] = Node(hijos[i],'e', [])
-
-    def set_value(self, value):
-        self.value = value
-
-    def set_label(self, label):
-        self.label = label
-
-    def __repr__(self, level=0):
-        ret = "\t" * level + repr(self.label) + "\n"
-        for child in self.childrens:
-            ret += self.childrens[child].__repr__(level + 1)
-        return ret
-
-    def interpret(self, prev=None):
-        if not self.childrens:
-            return int(self.value)
-        elif self.label == 'E':
-            return synE(self.value, self.childrens).interpret()
-        elif self.label == 'Ep':
-            return synEp(self.value, self.childrens).interpret(prev)
-        elif self.label == 'T':
-            return synT(self.value, self.childrens).interpret()
-        elif self.label == 'Tp':
-            return synTp(self.value, self.childrens).interpret(prev)
-        elif self.label == 'F':
-            return synF(self.value, self.childrens).interpret()
-
-
 def write(stack, input, izq, der):
     line = ' '.join(stack) + "\t"*4 + ' '.join([str(x) for x in input]) + "\t" * 4 + izq + " -> " + ' '.join(der) + '\n'
     f = open("ouput.txt", "a")
@@ -504,13 +406,13 @@ if __name__ == '__main__':
     grammar.get_nexts()
     grammar.create_table()
 
+    print('Tokens')
     print(tokens.tokens)
 
     validator = Validator(grammar.terminals, grammar.tas, 'S')
     parse_tree, is_valid = validator.validate(tokens.tokens)
-    print(parse_tree)
     if not is_valid:
-        raise Exception("Input is not accepted by rules")
+        raise Exception('Input is not accepted by rules')
     print(parse_tree)
     """
     print("Interpret value")

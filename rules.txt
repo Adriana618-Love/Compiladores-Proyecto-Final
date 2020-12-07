@@ -9,6 +9,9 @@ statement ::= conditional
 statement ::= declaration endline
 statement ::= assigment endline
 statement ::= expression endline
+statement ::= other_statement endline
+
+other_statement ::= Print ( expression )
 
 bucle ::= while ( expression ) { code }
 
@@ -45,5 +48,8 @@ operator ::= /
 operator ::= <
 operator ::= >
 operator ::= .
+operator ::= <=
+operator ::= >=
+operator ::= ==
 
 endline ::= ;
