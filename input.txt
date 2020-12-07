@@ -1,4 +1,9 @@
 
-d_number x (1);
+d_number x (2);
+Print(x);
 
-Print (1);
+d_string y('hola');
+Print(y);
+Print(y * x);
+
+Print(((x) * x));

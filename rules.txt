@@ -3,6 +3,7 @@ S ::= code $
 code ::= statement code_p
 code_p ::= statement code_p
 code_p ::= lambda
+code ::= lambda
 
 statement ::= bucle
 statement ::= conditional
@@ -19,27 +20,27 @@ conditional ::= if ( expression ) { code } conditional_p
 conditional_p ::= else { code }
 conditional_p ::= lambda
 
-declaration ::= d_number variable ( expression )
-declaration ::= d_string variable ( expression )
-declaration ::= d_video variable ( expression )
+declaration ::= d_number variable declaration_p
+declaration ::= d_string variable declaration_p
+declaration ::= d_video variable declaration_p
+declaration_p ::= ( expression )
+declaration_p ::= lambda
 
 assigment ::= set variable ( expression )
 
-expression ::= ( expression )
+expression ::= ( expression ) expression_p
 expression ::= variable expression_variable expression_p
-expression_variable = . expression_variable_p
+expression_variable ::= . expression_variable_p
 expression_variable_p ::= subclip ( expression , expression )
 expression_variable_p ::= set_start ( expression )
 expression_variable_p ::= volumex ( expression )
 expression_variable ::= lambda
 expression ::= number expression_p
 expression ::= string expression_p
-expression ::= VideoFileClip ( expression , expression ) expression_p
-expression ::= ImageClip ( expression , expression ) expression_p
+expression ::= VideoFileClip ( expression ) expression_p
+expression ::= ImageClip ( expression ) expression_p
 expression_p ::= operator expression
 expression_p ::= lambda
-
-extended_variable
 
 operator ::= +
 operator ::= -

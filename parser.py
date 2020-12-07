@@ -412,9 +412,9 @@ if __name__ == '__main__':
     validator = Validator(grammar.terminals, grammar.tas, 'S')
     parse_tree, is_valid = validator.validate(tokens.tokens)
     if not is_valid:
+        print(parse_tree)
         raise Exception('Input is not accepted by rules')
-    print(parse_tree)
-    """
+
     print("Interpret value")
-    print(parse_tree.interpret())
-    """
+    parse_tree.interpret()
+
