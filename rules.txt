@@ -1,73 +1,49 @@
-S ::= goal $
-goal ::= statement p_goal
-p_goal ::= statement p_goal
-p_goal ::= lambda
+S ::= code $
 
-statement ::= declaration endline
-statement ::= operation endline
-statement ::= while_bucle
-statement ::= for_bucle
+code ::= statement code_p
+code_p ::= statement code_p
+code_p ::= lambda
+
+statement ::= bucle
 statement ::= conditional
+statement ::= declaration endline
+statement ::= assigment endline
+statement ::= expression endline
 
-while_bucle ::= while ( comparison ) { p_goal }
+bucle ::= while ( expression ) { code }
 
-for_bucle ::= for ( for_bucle_p endline comparison endline operation ) { p_goal }
-for_bucle_p ::= declaration for_bucle_p_p
-for_bucle_p_p ::= = operation
-for_bucle_p ::= operation
+conditional ::= if ( expression ) { code } conditional_p
+conditional_p ::= else { code }
+conditional_p ::= lambda
 
-conditional ::= if ( comparison ) { p_goal }
+declaration ::= d_number variable ( expression )
+declaration ::= d_string variable ( expression )
+declaration ::= d_video variable ( expression )
 
-comparison ::= operation comparison_op operation comparison_p
-comparison_p ::= && operation comparison_p
-comparison_p ::= || operation comparison_p
-comparison_p ::= lambda
+assigment ::= set variable ( expression )
 
-comparison_op ::= !=
-comparison_op ::= ==
-comparison_op ::= <
-comparison_op ::= >
-comparison_op ::= <=
-comparison_op ::= >=
+expression ::= ( expression )
+expression ::= variable expression_variable expression_p
+expression_variable = . expression_variable_p
+expression_variable_p ::= subclip ( expression , expression )
+expression_variable_p ::= set_start ( expression )
+expression_variable_p ::= volumex ( expression )
+expression_variable ::= lambda
+expression ::= number expression_p
+expression ::= string expression_p
+expression ::= VideoFileClip ( expression , expression ) expression_p
+expression ::= ImageClip ( expression , expression ) expression_p
+expression_p ::= operator expression
+expression_p ::= lambda
 
-declaration ::= type name
-
-operation ::= (  operation_operator_p ) operation_right
-operation_operator_p ::= operation
-operation_right ::= operator operation
-operation_right ::= lambda
-
-operation ::= name operation_assign
-operation_assign ::= = operation
-operation_assign ::= + operation
-operation_assign ::= - operation
-operation_assign ::= * operation
-operation_assign ::= / operation
-operation_assign ::= ( parameters ) operation_assign
-operation_assign ::=  . name ( parameters ) operation_assign
-operation_assign ::= lambda
-
-parameters ::= operation parameters_p
-parameters ::= lambda
-parameters_p ::= , operation parameters_p
-parameters_p ::= lambda
-
-operation ::= num operation_number_p
-operation_number_p ::= number_op operation
-operation_number_p ::= lambda
-number_op ::= +
-number_op ::= -
-number_op ::= *
-number_op ::= /
-
-operation ::= string operation_string_p
-operation_string_p ::= string_op operation
-operation_string_p ::= lambda
-string_op ::= +
+extended_variable
 
 operator ::= +
 operator ::= -
 operator ::= *
 operator ::= /
+operator ::= <
+operator ::= >
+operator ::= .
 
 endline ::= ;

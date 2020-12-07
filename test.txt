@@ -1,9 +1,0 @@
-E  := T Ep $
-Ep := + T Ep
-Ep := - T Ep
-Ep := lambda
-T  := F Tp
-Tp := * F Tp 
-Tp := lambda
-F  := ( E )
-F  := num

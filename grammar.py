@@ -7,9 +7,8 @@ EPSILON = 'lambda'
 operation_assign = ['=', '+', '-', '*', '/']
 parenthesis = ['(', ')', '[', ']', '{', '}']
 comparison_op = ['!=', '==', '<', '>', '<=', '>=']
-reserved_word = ['Frame', 'Video', 'Audio', 'int']
-conditional_statement = ['for', 'while', 'if']
-function_statement = ['cargar', 'append', 'front', 'getNumberFrames', 'printf', 'setNumberFrames', 'join']
+reserved_words = ['while', 'if', 'else', 'd_number', 'd_string', 'd_video', 'set', 'subclip', 'volumex',
+                 'VideoFileClip', 'ImageClip']
 
 
 class File:
@@ -244,14 +243,10 @@ class Token:
                 self.type = it
 
         elif ty == 'STREAM':
-            if self.item in reserved_word:
-                self.type = 'type'
-            elif self.item in conditional_statement:
+            if self.item in reserved_words:
                 self.type = it
-            elif self.item in function_statement:
-                self.type = 'name'
             else:
-                self.type = 'name'
+                self.type = 'variable'
         else:
             self.type = ty
 
@@ -360,6 +355,7 @@ class Node:
         elif self.label == 'F':
             return synF(self.value, self.childrens).interpret()
 
+
 def write(stack, input, izq, der):
     line = ' '.join(stack) + "\t"*4 + ' '.join([str(x) for x in input]) + "\t" * 4 + izq + " -> " + ' '.join(der) + '\n'
     f = open("ouput.txt", "a")
@@ -390,8 +386,6 @@ class Validator:
         if dict is None:
             return -1
         prod = dict.get(tokens[idx].type, None)
-
-        #print("non_terminal",non_terminal,"production",prod,"tokens[idx].type",tokens[idx].type)  #//Imprime las variables locales
 
         lista.pop()
         if prod is None:
@@ -445,7 +439,6 @@ class Tokenizer:
         file = open(path_text, 'r')
         num_line = 1
         for line in file:
-            line = line.strip()
             if line:
                 self.tokenizer_line(line, num_line)
             num_line += 1
@@ -456,10 +449,10 @@ class Tokenizer:
         idx = 0
         while idx < len(line):
             if line[idx].isdigit():
-                token,idx = self.check_number(line, n_line, idx)
+                token, idx = self.check_number(line, n_line, idx)
                 self.tokens.append(token)
             elif line[idx].isalpha():
-                token,idx = self.check_variable(line, n_line, idx)
+                token, idx = self.check_variable(line, n_line, idx)
                 self.tokens.append(token)
             elif line[idx] == ' ' or line[idx] == '\n':
                 idx += 1
@@ -490,15 +483,15 @@ class Tokenizer:
         begin = index
         while (index < len(string)) and string[index].isdigit():
             index += 1
-        temp = Token(string[begin:index], "num", n_line, begin)
-        return temp, index
+        token = Token(string[begin:index], "number", n_line, begin)
+        return token, index
 
     def check_variable(self, string, n_line, index):
         begin = index
-        while (index < len(string)) and string[index].isalpha():
+        while (index < len(string)) and (string[index].isalpha() or string[index].isdigit() or string[index] == '_'):
             index += 1
-        temp = Token(string[begin:index], "STREAM", n_line, begin)
-        return temp, index
+        token = Token(string[begin:index], "STREAM", n_line, begin)
+        return token, index
 
 
 if __name__ == '__main__':
@@ -515,8 +508,11 @@ if __name__ == '__main__':
 
     validator = Validator(grammar.terminals, grammar.tas, 'S')
     parse_tree, is_valid = validator.validate(tokens.tokens)
+    print(parse_tree)
     if not is_valid:
         raise Exception("Input is not accepted by rules")
     print(parse_tree)
+    """
     print("Interpret value")
     print(parse_tree.interpret())
+    """
