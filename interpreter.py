@@ -1,4 +1,4 @@
-from moviepy.editor import VideoFileClip
+from moviepy.editor import VideoFileClip, concatenate_videoclips
 
 Scope = {}
 Videos = {}
@@ -146,7 +146,6 @@ class Syn_expression_variable(SyntacticClass):
 
 class Syn_expression_variable_p(SyntacticClass):
     def interpret(self, val=None):
-        print (val.__class__.__name__)
         if self.childrens.get('subclip', False):
             return val.subclip(
                 self.childrens.get('expression').interpret(),
@@ -160,6 +159,27 @@ class Syn_expression_variable_p(SyntacticClass):
             return val.volumex(
                 self.childrens.get('expression').interpret()
             )
+        elif self.childrens.get('show_frame', False):
+            return val.show(
+                self.childrens.get('expression').interpret()
+            )
+        elif self.childrens.get('set_video_duration', False):
+            return val.set_duration(
+                self.childrens.get('expression').interpret()
+            )
+        elif self.childrens.get('video_preview', False):
+            return val.preview(
+                fps=self.childrens.get('expression').interpret()
+            )
+        elif self.childrens.get('set_start', False):
+            return val.set_start(
+                self.childrens.get('expression').interpret()
+            )
+        elif self.childrens.get('video_concatenate', False):
+            return concatenate_videoclips([
+                val,
+                self.childrens.get('expression').interpret()
+            ])
         return val
 
 

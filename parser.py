@@ -10,7 +10,7 @@ parenthesis = ['(', ')', '[', ']', '{', '}']
 comparison_op = ['!=', '==', '<', '>', '<=', '>=', '&&', '||']
 reserved_words = ['while', 'if', 'else', 'set', 'd_number', 'd_string', 'd_video', 'd_video_text',
                   'subclip', 'volumex', 'Print', 'write_video', 'set_video_duration',
-                  'show_frame', 'video_preview', 'set_start']
+                  'show_frame', 'video_preview', 'set_start', 'video_concatenate']
 
 
 class File:

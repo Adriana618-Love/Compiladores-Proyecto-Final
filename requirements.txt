@@ -16,6 +16,7 @@ numpy==1.19.4             # via imageio, moviepy
 pillow==8.0.1             # via imageio
 pip-tools==5.4.0          # via -r requirements.in
 proglog==0.1.9            # via moviepy
+pygame==2.0.0             # via -r requirements.in
 requests==2.25.0          # via moviepy
 six==1.15.0               # via pip-tools
 tqdm==4.54.1              # via moviepy, proglog

@@ -1,3 +1,33 @@
+
+d_number x (2);
+Print(x);
+
+d_string y('hola');
+Print(y);
+Print(y * x);
+
+Print(((x) * x));
+
+set x (3);
+Print(((x) * x));
+Print((5 + 4 * 2));
+
+while (x < 10) {
+    Print(x);
+    set x(x + 1);
+    if ((x <= 8) && (x>7)) {
+        set x(10);
+    }
+}
+
 d_video video('videos/video.mp4');
-set video (video.subclip(1, 2));
+set video(video.set_start(10));
+set video(video.set_video_duration(20));
+video.video_preview(15);
+set video (video.subclip(0, 2));
+video.show_frame(10);
+d_video video2('videos/video.mp4');
+set video (video.video_concatenate(video2));
+set video (video.volumex(0));
+set video(video.set_video_duration(10));
 video.write_video('videos/new_video.mp4');
