@@ -2,3 +2,4 @@
 venv/
 ouput.txt
 *.pyc
+myinput.txt

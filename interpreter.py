@@ -196,31 +196,59 @@ class Syn_expression_p(SyntacticClass):
             )
         return val
 
+def show_error(operation,term1,term2):
+    print("Error: You intend "+ operation +" "+ term1.__class__.__name__+" and "+term2.__class__.__name__)
+    import sys
+    sys.exit()
 
 class Syn_operator(SyntacticClass):
     def interpret(self, term1, term2):
         if self.childrens.get('*', False):
-            return term1 * term2
+            if term1.__class__.__name__ == term2.__class__.__name__:
+                return term1 * term2
+            show_error('Multiply',term1,term2)
         elif self.childrens.get('/', False):
-            return term1 / term2
+            if term1.__class__.__name__ == term2.__class__.__name__:
+                if term2 == 0 or term2 is None:
+                    show_error('Zero Division on',term1,term2)
+                return term1 / term2
+            show_error('Divide',term1,term2)
         elif self.childrens.get('+', False):
-            return term1 + term2
+            if term1.__class__.__name__ == term2.__class__.__name__:
+                return term1 + term2
+            show_error('Add',term1,term2)
         elif self.childrens.get('-', False):
-            return term1 - term2
+            if term1.__class__.__name__ == term2.__class__.__name__:
+                return term1 - term2
+            show_error('Sustract',term1,term2)
         elif self.childrens.get('==', False):
-            return term1 == term2
+            if term1.__class__.__name__ == term2.__class__.__name__:
+                return term1 == term2
+            show_error('Compare',term1,term2)
         elif self.childrens.get('<=', False):
-            return term1 <= term2
+            if term1.__class__.__name__ == term2.__class__.__name__:
+                return term1 <= term2
+            show_error('Compare',term1,term2)
         elif self.childrens.get('&&', False):
-            return term1 and term2
+            if term1.__class__.__name__ == term2.__class__.__name__:
+                return term1 and term2
+            show_error('Compare',term1,term2)
         elif self.childrens.get('||', False):
-            return term1 or term2
+            if term1.__class__.__name__ == term2.__class__.__name__:
+                return term1 or term2
+            show_error('Compare',term1,term2)
         elif self.childrens.get('>=', False):
-            return term1 >= term2
+            if term1.__class__.__name__ == term2.__class__.__name__:
+                return term1 >= term2
+            show_error('Compare',term1,term2)
         elif self.childrens.get('<', False):
-            return term1 < term2
+            if term1.__class__.__name__ == term2.__class__.__name__:
+                return term1 < term2
+            show_error('Compare',term1,term2)
         elif self.childrens.get('>', False):
-            return term1 > term2
+            if term1.__class__.__name__ == term2.__class__.__name__:
+                return term1 > term2
+            show_error('Compare',term1,term2)
 
 
 class Node:

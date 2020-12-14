@@ -2,6 +2,8 @@
 import os
 from os import path
 from interpreter import Node
+from collections import namedtuple
+import linecache
 
 DOLAR = '$'
 EPSILON = 'lambda'
@@ -12,14 +14,18 @@ reserved_words = ['while', 'if', 'else', 'set', 'd_number', 'd_string', 'd_video
                   'subclip', 'volumex', 'Print', 'write_video', 'set_video_duration',
                   'show_frame', 'video_preview', 'set_start', 'video_concatenate']
 
+########EXPERIMENTAL##########
+Error = namedtuple('Error','padding n_line line description')
+##############################
 
 class File:
     file = None
-
+    size = 0
     def __init__(self, name_file, path_file=''):
         self.name_file = name_file
         self.path_file = os.path.join((str(os.getcwd()),path_file)[len(path_file)], self.name_file)
-        print("From file:", self.path_file)
+        #print("From file:", self.path_file)
+        self.size = len(self.get_all_lines())
         self.init_file()
 
     def init_file(self):
@@ -37,6 +43,9 @@ class File:
         lines = self.file.readlines()
         self.file.close()
         return lines
+    def get_line(self,idx):
+        line  = linecache.getline(self.name_file,idx)
+        return line
 
 
 class Production:
@@ -243,6 +252,9 @@ class Token:
                 self.type = it
             elif self.item in comparison_op:
                 self.type = it
+            else:
+                self.type = "ERROR"
+                #Pendiente: Sugerir si es una variable o un número.
 
         elif ty == 'STREAM':
             if self.item in reserved_words:
@@ -272,6 +284,7 @@ class Validator:
     epsilon = EPSILON
     error_message = 'There was a problem, failed'
     initial_state = 'S'
+    errors = []
 
     def __init__(self, terminals, table, initial_state):
         for term in terminals:
@@ -287,11 +300,13 @@ class Validator:
     def _validate(self, non_terminal, idx, tokens, lista, node, nivel):
         dict = self.table.get(non_terminal, None)
         if dict is None:
+            self.errors.append(Error(0,tokens[idx].line,self.get_line(tokens[idx].line)+self.get_line(tokens[idx].line-1),'Wrong Syntax'))
             return -1
         prod = dict.get(tokens[idx].type, None)
 
         lista.pop()
         if prod is None:
+            self.errors.append(Error(0,tokens[idx].line,self.get_line(tokens[idx].line)+self.get_line(tokens[idx].line-1),'Wrong Syntax'))
             return -1
         self._join(lista, prod)
 
@@ -323,6 +338,7 @@ class Validator:
                         if tokens[idx].type == 'num' else tokens[idx].item
                     idx += 1
                 else:
+                    self.errors.append(Error(0,tokens[idx].line,self.get_line(tokens[idx].line)+self.get_line(tokens[idx].line-1),'Wrong Syntax'))
                     return -1
                 lista.pop()
                 write(lista.copy(), _input, "", [term])
@@ -332,11 +348,28 @@ class Validator:
         arbol = Node(self.initial_state,'e', [])
         lista = [self.initial_state]
         size = self._validate(self.initial_state, 0, tokens, lista, arbol, 0)
+        if(size != len(tokens)):
+            self.print_errors()
         return arbol, size == len(tokens)
+    
+    def get_line(self,idx):
+        file  = File('myinput.txt')
+        if idx == -1:
+            idx = file.size
+        line = file.get_line(idx)
+        return line
+    
+    def print_errors(self):
+        for error in self.errors:
+            self.print_error(error)
+    def print_error(self, error):
+        print(" "*error.padding + ">"+error.line,end="")
+        print("Error in line " + str(error.n_line) + ": " + error.description)
 
 
 class Tokenizer:
     tokens = []
+    errors = []
 
     def __init__(self, path_text):
         file = open(path_text, 'r')
@@ -345,6 +378,8 @@ class Tokenizer:
             if line:
                 self.tokenizer_line(line, num_line)
             num_line += 1
+        if len(self.errors):
+            self.print_errors()
         token = Token(DOLAR, DOLAR, -1, -1)
         self.tokens.append(token)
 
@@ -386,6 +421,8 @@ class Tokenizer:
         begin = index
         while (index < len(string)) and string[index].isdigit():
             index += 1
+        if index < len(string) and index+1 < len(string) and string[index+1].isalpha():
+            self.errors.append(Error(index,n_line,string,'Bad declaration of variable or number'))
         token = Token(string[begin:index], "number", n_line, begin)
         return token, index
 
@@ -395,10 +432,17 @@ class Tokenizer:
             index += 1
         token = Token(string[begin:index], "STREAM", n_line, begin)
         return token, index
+    def print_errors(self):
+        for error in self.errors:
+            self.print_error(error)
+    def print_error(self, error):
+        print(error.line,end="")
+        print(" "*error.padding + '^')
+        print("Error in line " + str(error.n_line) + ": " + error.description)
 
 
 if __name__ == '__main__':
-    tokens = Tokenizer('input.txt')
+    tokens = Tokenizer('myinput.txt')
     file = File('rules.txt')
     grammar = Grammar()
     grammar.set_init('S')
@@ -407,14 +451,16 @@ if __name__ == '__main__':
     grammar.get_nexts()
     grammar.create_table()
 
-    print('Tokens')
-    print(tokens.tokens)
+    #print('Tokens')
+    #print(tokens.tokens)
 
     validator = Validator(grammar.terminals, grammar.tas, 'S')
     parse_tree, is_valid = validator.validate(tokens.tokens)
     if not is_valid:
-        print(parse_tree)
-        raise Exception('Input is not accepted by rules')
+        #print(parse_tree)
+        print('Input is not accepted by rules')
+        import sys
+        sys.exit()
 
     print("Interpret value")
     parse_tree.interpret()
