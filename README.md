@@ -20,3 +20,9 @@
 ```bash
     $ python parser.py
 ```
+
+# Testing
+
+```bash
+    $ python tests.py
+```
