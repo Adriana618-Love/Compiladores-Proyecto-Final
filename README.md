@@ -9,7 +9,7 @@
 * output.txt : Registra todo el proceso que realiza grammar.py, puede verse como un .log.
 * rules.txt : Contiene la gramática del proyecto Final
 
-# Instalar Requrimientos
+# Instalar Requerimientos
 
 ```bash
     $ pip install -r requirements.txt
