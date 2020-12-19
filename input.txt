@@ -4,7 +4,6 @@ Print(x);
 
 d_string y('hola');
 Print(y);
-Print(y * x);
 
 Print(((x) * x));
 

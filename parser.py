@@ -353,7 +353,7 @@ class Validator:
         return arbol, size == len(tokens)
     
     def get_line(self,idx):
-        file  = File('myinput.txt')
+        file  = File('input.txt')
         if idx == -1:
             idx = file.size
         line = file.get_line(idx)
@@ -442,7 +442,7 @@ class Tokenizer:
 
 
 if __name__ == '__main__':
-    tokens = Tokenizer('myinput.txt')
+    tokens = Tokenizer('input.txt')
     file = File('rules.txt')
     grammar = Grammar()
     grammar.set_init('S')
